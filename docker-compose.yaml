@@ -1,0 +1,74 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - broker_network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50' 
+          memory: 512M
+  activeMQ:
+    image: apache/activemq-classic:latest
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+      - "61613:61613"
+    environment:
+      ACTIVEMQ_ADMIN_LOGIN: admin
+      ACTIVEMQ_ADMIN_PASSWORD: admin
+      ACTIVEMQ_OPTS: "-Xms128M -Xmx256M -Djetty.host=0.0.0.0"
+    volumes:
+      - activemq_data:/opt/apache-activemq/data
+    networks:
+      - broker_network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+    
+  sistema_a:
+    build: 
+      context: ./sistema_a
+    networks:
+      - broker_network
+    depends_on:
+      - rabbitmq
+  
+  sistema_b:
+    build: 
+      context: ./sistema_b
+    networks:
+      - broker_network
+    environment:
+      ACTIVEMQ_URI: "tcp://activeMQ:61616"
+    depends_on:
+      - activeMQ
+  integrador:
+    build: 
+      context: ./integrador
+    networks:
+      - broker_network
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      ACTIVEMQ_HOST: activeMQ
+    depends_on:
+      - rabbitmq
+      - activeMQ
+
+volumes:
+  rabbitmq_data:
+  activemq_data:
+
+networks:
+  broker_network:
+    driver: bridge

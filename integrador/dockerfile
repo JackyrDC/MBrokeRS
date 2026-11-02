@@ -1,0 +1,11 @@
+FROM python:3.11-slim
+WORKDIR /app
+
+# Copiamos primero los requerimientos para aprovechar el caché de capas de Docker
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiamos el script
+COPY main.py .
+
+CMD ["python", "-u", "main.py"]

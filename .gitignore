@@ -1,0 +1,57 @@
+# ==========================================
+# 1. Variables de Entorno y Logs
+# ==========================================
+.env
+.env.local
+*.log
+docker-compose.override.yml
+*target/
+
+# ==========================================
+# 2. Sistema A (Rust / Cargo)
+# ==========================================
+# Ignora la carpeta de compilación donde están los binarios de 1GB+
+/sistema_a/target/
+# Archivos de respaldo de Rust
+**/*.rs.bk
+
+# ==========================================
+# 3. Sistema B (C# / .NET)
+# ==========================================
+# Ignora binarios y archivos intermedios de compilación
+/sistema_b/bin/
+/sistema_b/obj/
+# Archivos de configuración de usuario local de Visual Studio
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ==========================================
+# 4. Integrador (Python)
+# ==========================================
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+*$py.class
+# Entornos virtuales (incluyendo el que creaste)
+/integrador/venv/
+/integrador/.venv/
+venv/
+.venv/
+env/
+# Metadatos de paquetes
+*.egg-info/
+.eggs/
+
+# ==========================================
+# 5. IDEs y Sistemas Operativos (Windows/Linux)
+# ==========================================
+# Visual Studio Code
+.vscode/
+# Visual Studio (Full)
+.vs/
+# Archivos temporales de Windows y macOS
+Thumbs.db
+Desktop.ini
+.DS_Store

@@ -1,0 +1,4 @@
+docopt-ng==0.9.0
+pika==1.4.4
+stomp.py==9.0.0
+websocket-client==1.9.2

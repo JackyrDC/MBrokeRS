@@ -1,0 +1,19 @@
+# Etapa 1: Construcción (Pesada - Incluye SDK)
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copiamos el archivo de proyecto y restauramos dependencias
+COPY sistema_b.csproj .
+RUN dotnet restore
+
+# Copiamos el resto del código y compilamos en Release
+COPY . .
+RUN dotnet publish -c Release -o /app/publish
+
+# Etapa 2: Ejecución (Ligera - Solo el Runtime)
+FROM mcr.microsoft.com/dotnet/runtime:8.0
+WORKDIR /app
+COPY --from=build /app/publish .
+
+# Ejecutamos la DLL resultante
+CMD ["dotnet", "sistema_b.dll"]

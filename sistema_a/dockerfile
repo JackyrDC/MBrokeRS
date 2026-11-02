@@ -1,0 +1,23 @@
+# Etapa 1: Construcción (Pesada)
+FROM rust:1-slim AS builder
+WORKDIR /usr/src/sistema_a
+
+# Copiamos los manifiestos y el código fuente
+COPY Cargo.toml ./
+COPY src ./src
+
+# Compilamos en modo release para máxima optimización
+RUN cargo build --release
+
+# Etapa 2: Ejecución (Ligera)
+FROM debian:trixie-slim
+WORKDIR /app
+
+# Instalamos dependencias del sistema mínimas que tokio/lapin podrían necesitar (SSL, etc)
+RUN apt-get update && apt-get install -y libssl-dev ca-certificates && rm -rf /var/lib/apt/lists/*
+
+# Extraemos solo el binario precompilado de la Etapa 1
+COPY --from=builder /usr/src/sistema_a/target/release/sistema_a .
+
+# Ejecutamos el binario
+CMD ["./sistema_a"]
